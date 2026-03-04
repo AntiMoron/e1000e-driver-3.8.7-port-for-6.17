@@ -1,0 +1,12 @@
+./netdev.o
+./ethtool.o
+./ich8lan.o
+./mac.o
+./nvm.o
+./phy.o
+./manage.o
+./80003es2lan.o
+./82571.o
+./param.o
+./ptp.o
+./kcompat.o
