@@ -145,6 +145,12 @@ E1000_PARAM(KumeranLockLoss, "Enable Kumeran lock loss workaround");
 E1000_PARAM(CrcStripping,
 	    "Enable CRC Stripping, disable if your BMC needs the CRC");
 
+/* Allow skipping NVM checksum validation (use with caution) */
+int ignore_nvm_checksum = 0;
+module_param(ignore_nvm_checksum, int, 0444);
+MODULE_PARM_DESC(ignore_nvm_checksum,
+                 "Ignore invalid NVM checksum and continue probe (dangerous)");
+
 /* Enable/disable EEE (a.k.a. IEEE802.3az)
  *
  * Valid Range: 0, 1

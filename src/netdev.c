@@ -29,6 +29,7 @@
 #include <linux/prefetch.h>
 
 #include "e1000.h"
+extern int ignore_nvm_checksum;
 
 #ifdef CONFIG_E1000E_NAPI
 #define DRV_EXTRAVERSION "" "-NAPI"
@@ -5383,8 +5384,8 @@ static int e1000_set_mac(struct net_device *netdev, void *p)
 	if (!is_valid_ether_addr((unsigned char *)(addr->sa_data)))
 		return -EADDRNOTAVAIL;
 
-	memcpy(netdev->dev_addr, (void *)addr->sa_data, netdev->addr_len);
-	memcpy(adapter->hw.mac.addr, (void *)addr->sa_data, netdev->addr_len);
+	memcpy((void *)netdev->dev_addr, addr->sa_data, netdev->addr_len);
+	memcpy((void *)adapter->hw.mac.addr, addr->sa_data, netdev->addr_len);
 
 	hw->mac.ops.rar_set(&adapter->hw, adapter->hw.mac.addr, 0);
 
@@ -8626,6 +8627,12 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	for (i = 0;; i++) {
 		if (e1000_validate_nvm_checksum(&adapter->hw) >= 0)
 			break;
+		/* allow module parameter to bypass checksum failure */
+		if (ignore_nvm_checksum) {
+			dev_warn(pci_dev_to_dev(pdev),
+				 "Ignoring invalid NVM checksum due to ignore_nvm_checksum=1\n");
+			break;
+		}
 		if (i == 2) {
 			dev_err(pci_dev_to_dev(pdev),
 				"The NVM Checksum Is Not Valid\n");
@@ -8642,12 +8649,12 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 			"NVM Read Error while reading MAC address\n");
 
 #ifdef ETHTOOL_GPERMADDR
-	memcpy(netdev->dev_addr, (void *)adapter->hw.mac.addr, netdev->addr_len);
+memcpy((void *)netdev->dev_addr, adapter->hw.mac.addr, netdev->addr_len);
 #else
-	memcpy(netdev->dev_addr, (void *)adapter->hw.mac.addr, netdev->addr_len);
+memcpy((void *)netdev->dev_addr, adapter->hw.mac.addr, netdev->addr_len);
 #endif
 #ifdef ETHTOOL_GPERMADDR
-	memcpy(netdev->perm_addr, (void *)adapter->hw.mac.addr, netdev->addr_len);
+memcpy((void *)netdev->perm_addr, adapter->hw.mac.addr, netdev->addr_len);
 #endif
 
 	if (!is_valid_ether_addr(netdev->dev_addr)) {
