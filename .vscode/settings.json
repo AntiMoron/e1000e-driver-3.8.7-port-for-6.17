@@ -1,0 +1,17 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^modinfo \\./e1000e\\.ko$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^mokutil --sb-state 2>/dev/null \\| cat$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "modinfo": true,
+        "mokutil": true,
+        "lspci": true,
+        "lsmod": true,
+        "ip": true
+    }
+}
